@@ -73,7 +73,7 @@ A dead simple GET request piped to STDOUT:
 flowHttp('http://example.com').pipe(process.stdout);
 ```
 
-Same as above, but using the standard events from `stream.Readable`:
+Same as above by listening to the emitted events:
 
 ```javascript
 var body = '';
