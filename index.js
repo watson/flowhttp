@@ -34,4 +34,7 @@ flowHttp.del = function (options) {
   return req;
 };
 
+// Some might want easy access to the Request object - we don't use it
+flowHttp.Request = Request;
+
 module.exports = exports = flowHttp;

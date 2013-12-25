@@ -11,61 +11,140 @@ status](https://secure.travis-ci.org/watson/flowhttp.png)](http://travis-ci.org/
 npm install flowhttp
 ```
 
-## Usage
+## Basic usage
 
-Get the `flowHttp` module:
 ```javascript
 var flowHttp = require('flowhttp');
+
+// A simple GET request
+flowHttp('http://example.com').pipe(process.stdout);
+
+// Upload a file
+fs.createReadStream('./file.txt').pipe(flowHttp.post('http://example.com/upload'));
 ```
 
-The `flowHttp` module exposes 4 basic functions, each corresponding to the
-standard HTTP REST verbs:
+## API
 
-- `flowHttp.get(options)`: Perform a GET request
-- `flowHttp.post(options)`: Perform a POST request
-- `flowHttp.put(options)`: Perform a PUT request
-- `flowHttp.del(options)`: Perform a DELETE request
-- `flowHttp(options)`: An alias for the `flowHttp.get(options)` function
+### flowHttp.request(options)
+
+At the core of the `flowHttp` module is the `flowHttp.request()` method.
+This method performs a basic HTTP or HTTPS request (defaults to GET).
+
+`options` can be an object or a string. If `options` is a string, it is
+automatically parsed with
+[url.parse()](http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost).
 
 The `options` argument is identical to the first argument of the
 [http.request()](http://nodejs.org/api/http.html#http_http_request_options_callback)
-method in core, but basically `options` can be an object or a string. If
-`options` is a string, it is automatically parsed with
-[url.parse()](http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost).
-For details see the
-[http.request()](http://nodejs.org/api/http.html#http_http_request_options_callback)
-documentation.
+method in the http core module. You should check out that documentation
+for the most up-to-date info related to your version of node.js.
 
-FlowHttp handles both HTTP and HTTPS transparently.
+It returns a `flowHttp.Request` object which can be used to send data
+along with the request and receive data from the response. This makes it
+very easy to read data from any request and optionally write data to a
+POST or PUT request.
 
-### Request & response
+### flowHttp.get(options)
 
-Each of the 4 basic functions available on the `flowHttp` module returns a
-duplex stream. This makes it very easy to read data from any request and
-optionally write data to a POST or PUT request.
+One of 4 convenience methods corresponding to the standard HTTP REST
+verbs. The only difference between this method and `flowHttp.request()`
+is that it sets the method to GET and calls `req.end()` automatically.
+
+### flowHttp.post(options)
+
+One of 4 convenience methods corresponding to the standard HTTP REST
+verbs. The only difference between this method and `flowHttp.request()`
+is that it sets the method to POST.
+
+### flowHttp.put(options)
+
+One of 4 convenience methods corresponding to the standard HTTP REST
+verbs. The only difference between this method and `flowHttp.request()`
+is that it sets the method to PUT.
+
+### flowHttp.del(options)
+
+One of 4 convenience methods corresponding to the standard HTTP REST
+verbs. The only difference between this method and `flowHttp.request()`
+is that it sets the method to DELETE and calls `req.end()`
+automatically.
+
+### flowHttp(options)
+
+Since most requests are GET requests, the `flowHttp.get()` method have
+been aliased for your convenience.
+
+## Class: flowHttp.Request
+
+The `Request` object is returned by `flowHttp.request()` and its
+convenience methods. `Request` inherits from
+[stream.Duplex](http://nodejs.org/api/stream.html#stream_class_stream_duplex_1).
 
 ```javascript
-var stream = flowHttp('http://example.com');
+var duplexRequestStream = flowHttp('http://example.com');
 ```
 
-#### Events
-
-- **response**: `function (response) {}` - Get access to the raw [http.IncomingMessage](http://nodejs.org/api/http.html#http_http_incomingmessage) reponse object. This is emitted before any *data* or *end* event. You would normally not need to listen for this event unless you need to acceess the response headers or status code
-- **data**: `function (chunk) {}` - Emitted for each chunk of the reponse body
-- **end**: `function () {}` - Emitted when the entire reponse have been received
-- **error**: `function (err) {}` - If an error occurs during the request/reponse cycle, you will get notified here
-
-#### API
-
-Besides the normal methods avaliable on a duplex stream, the following API from
+Besides the normal methods avaliable on a duplex stream, the following
+functions from
 [http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
 have been made available:
 
-- `.setHeader(name, value)`
-- `.getHeader(name)`
-- `.removeHeader(name)`
+### request.setHeader(name, value)
 
-### Examples
+Set a header on the
+[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
+object.
+
+### request.getHeader(name)
+
+Get a header from the
+[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
+object.
+
+### request.removeHeader(name)
+
+Remove a header from the
+[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
+object.
+
+### Event 'response'
+
+`function (response) {}`
+
+Get access to the raw [http.IncomingMessage](http://nodejs.org/api/http.html#http_http_incomingmessage) reponse object. This is emitted before any *data* or *end* event. You would normally not need to listen for this event unless you need to acceess the response headers or status code.
+
+### Event 'data'
+
+`function (chunk) {}`
+
+Emitted for each chunk of the reponse body.
+
+### Event 'end'
+
+`function () {}`
+
+Emitted when the entire reponse have been received.
+
+### Event 'error'
+
+`function (err) {}`
+
+If an error occurs during the request/reponse cycle, you will get notified here.
+
+## Defaults
+
+The default
+[http.globalAgent](http://nodejs.org/api/http.html#http_http_globalagent)
+can easily be overwritten:
+
+```javascript
+flowHttp.agent = false; // don't use an agent
+```
+
+For more info about custom agents, see
+[http.Agent](http://nodejs.org/api/http.html#http_class_http_agent).
+
+## Examples
 
 A dead simple GET request piped to STDOUT:
 
