@@ -77,10 +77,10 @@ Same as above by listening to the emitted events:
 
 ```javascript
 var body = '';
-var req = flowHttp('http://example.com')
+flowHttp('http://example.com')
   .on('response', function (res) {
     if (res.headers['some-header'] !== 'some-expected-value')
-      req.abort(); // terminate the request
+      res.destroy(); // terminate the request
   })
   .on('data', function (chunk) {
     body += chunk;
