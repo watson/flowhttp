@@ -15,7 +15,7 @@ describe('flowHttp.Request', function () {
   });
 });
 
-describe('Request object', function () {
+describe('request', function () {
   var req;
 
   before(function () {
