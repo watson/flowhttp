@@ -36,7 +36,7 @@ For details see the
 [http.request()](http://nodejs.org/api/http.html#http_http_request_options_callback)
 documentation.
 
-FlowHttp handles both HTTP and HTTPS transparantly.
+FlowHttp handles both HTTP and HTTPS transparently.
 
 ### Request & response
 
