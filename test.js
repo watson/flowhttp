@@ -51,7 +51,7 @@ describe('flowHttp', function () {
   before(function (done) {
     server = http.createServer(function (req, res) {
       res.end('server response');
-    })
+    });
     server.listen(5000, done);
   });
 
