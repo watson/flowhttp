@@ -74,6 +74,15 @@ describe('flowHttp', function () {
     assert(fh.del(url) instanceof Request, 'DELETE should return an instance of Request');
   });
 
+  it('should include the original http.IncomingMessage object on the returned Request object', function (done) {
+    var req = fh(url);
+    req.on('response', function (res) {
+      assert(res instanceof http.IncomingMessage);
+      assert.strictEqual(req.res, res);
+      done();
+    });
+  });
+
   ['get', 'del'].forEach(function (method) {
     describe('fh.' + method, function () {
       var response = false;
