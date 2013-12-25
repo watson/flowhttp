@@ -22,6 +22,10 @@ describe('request', function () {
     req = new Request(url.parse('http://example.com'));
   });
 
+  it('should have the original http.ClientRequest object', function () {
+    assert(req.req instanceof http.ClientRequest);
+  });
+
   it('should have the reqular http.ClientRequest methods', function () {
     assert.strictEqual(typeof req.setHeader, 'function');
     assert.strictEqual(typeof req.getHeader, 'function');
