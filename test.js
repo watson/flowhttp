@@ -60,11 +60,46 @@ describe('flowHttp', function () {
   });
 
   it('should return instances of Request', function () {
+    assert(fh.request(url) instanceof Request, '.request() should return an instance of Request');
     assert(fh(url) instanceof Request, 'Implicit GET should return an instance of Request');
     assert(fh.get(url) instanceof Request, 'Explicit GET should return an instance of Request');
     assert(fh.post(url) instanceof Request, 'POST should return an instance of Request');
     assert(fh.put(url) instanceof Request, 'PUT should return an instance of Request');
     assert(fh.del(url) instanceof Request, 'DELETE should return an instance of Request');
+  });
+
+  ['get', 'del'].forEach(function (method) {
+    describe('fh.' + method, function () {
+      var response = false;
+      before(function (done) {
+        var req = fh[method](url).on('response', function (res) {
+          response = true;
+          done();
+        });
+        setTimeout(function () {
+          if (!response) done(new Error('the response event was never emitted'));
+        }, 100);
+      });
+
+      it('should autimatically send the request', function () {
+        assert.ok(response);
+      });
+    });
+  });
+
+  ['request', 'post', 'put'].forEach(function (method) {
+    describe('fh.' + method, function () {
+      before(function (done) {
+        var req = fh[method](url).on('response', function () {
+          done(new Error('the response event should not have been emitted'));
+        });
+        setTimeout(done, 100);
+      });
+
+      it('should not autimatically send the request', function () {
+        assert(true);
+      });
+    });
   });
 
   ['get', 'del'].forEach(function (method) {
