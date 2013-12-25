@@ -182,7 +182,7 @@ fs.createReadableStream('./picture.jpg')
 POST data to the remote server and pipe the response to STDOUT:
 
 ```javascript
-var req = flowHttp.put('http://example.com');
+var req = flowHttp.post('http://example.com');
 req.pipe(process.stdout);
 req.write('data to be sent to the server');
 red.end(); // call end to send the request
