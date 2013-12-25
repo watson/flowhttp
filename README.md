@@ -36,21 +36,50 @@ For details see the
 [http.request()](http://nodejs.org/api/http.html#http_http_request_options_callback)
 documentation.
 
-### Streams
+### Request & response
 
 Each of the 4 basic functions available on the `flowHttp` module returns a
 duplex stream. This makes it very easy to read data from any request and
-optionally write data to a `POST` or `PUT` request:
+optionally write data to a POST or PUT request.
 
 ```javascript
-var flowHttp = require('flowhttp');
+var stream = flowHttp('http://example.com');
+```
 
-// A dead simple GET request piped to STDOUT
+#### Events
+
+- **response**: `function (response) {}` - Get access to the raw [http.IncomingMessage](http://nodejs.org/api/http.html#http_http_incomingmessage) reponse object. This is emitted before any *data* or *end* event. You would normally not need to listen for this event unless you need to acceess the response headers or status code
+- **data**: `function (chunk) {}` - Emitted for each chunk of the reponse body
+- **end**: `function () {}` - Emitted when the entire reponse have been received
+- **error**: `function (err) {}` - If an error occurs during the request/reponse cycle, you will get notified here
+
+#### API
+
+Besides the normal methods avaliable on a duplex stream, the following API from
+[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
+have been made available:
+
+- `.setHeader(name, value)`
+- `.getHeader(name)`
+- `.removeHeader(name)`
+
+### Examples
+
+A dead simple GET request piped to STDOUT:
+
+```javascript
 flowHttp('http://example.com').pipe(process.stdout);
+```
 
-// Same as above, but using the standard events from stream.Readable
+Same as above, but using the standard events from `stream.Readable`:
+
+```javascript
 var body = '';
-flowHttp('http://example.com')
+var req = flowHttp('http://example.com')
+  .on('response', function (res) {
+    if (res.headers['some-header'] !== 'some-expected-value')
+      req.abort(); // terminate the request
+  })
   .on('data', function (chunk) {
     body += chunk;
   })
@@ -58,18 +87,24 @@ flowHttp('http://example.com')
     // output the body returned from the GET example.com reqeust
     console.log(body);
   });
+```
 
-// A readable stream piped through a simple POST request and the response piped
-// to STDOUT
-someReadableStream
+Upload a picture by piping it through a simple POST request and outputting the 
+response to STDOUT:
+
+```javascript
+fs.createReadableStream('./picture.jpg')
   .pipe(flowHttp.post('http://example.com'))
   .pipe(process.stdout);
+```
 
-// POST data to the remote server and pipe the response to STDOUT
+POST data to the remote server and pipe the response to STDOUT:
+
+```javascript
 var req = flowHttp.put('http://example.com');
 req.pipe(process.stdout);
 req.write('data to be sent to the server');
-red.end();
+red.end(); // call end to send the request
 ```
 
 ## License
