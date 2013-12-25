@@ -85,19 +85,14 @@ describe('flowHttp', function () {
 
   ['get', 'del'].forEach(function (method) {
     describe('fh.' + method, function () {
-      var response = false;
       before(function (done) {
-        var req = fh[method](url).on('response', function (res) {
-          response = true;
+        fh[method](url).on('response', function () {
           done();
         });
-        setTimeout(function () {
-          if (!response) done(new Error('the response event was never emitted'));
-        }, 100);
       });
 
       it('should autimatically send the request', function () {
-        assert.ok(response);
+        assert(true);
       });
     });
   });
@@ -105,7 +100,7 @@ describe('flowHttp', function () {
   ['request', 'post', 'put'].forEach(function (method) {
     describe('fh.' + method, function () {
       before(function (done) {
-        var req = fh[method](url).on('response', function () {
+        fh[method](url).on('response', function () {
           done(new Error('the response event should not have been emitted'));
         });
         setTimeout(done, 100);
@@ -131,9 +126,6 @@ describe('flowHttp', function () {
             end = true;
             done();
           });
-        setTimeout(function () {
-          if (!end) done(new Error('the end event was never fired'));
-        }, 100);
       });
 
       it('should emit a data event', function () {
@@ -165,9 +157,6 @@ describe('flowHttp', function () {
             done();
           });
         req.end('sending data...');
-        setTimeout(function () {
-          if (!end) done(new Error('the end event was never fired'));
-        }, 100);
       });
 
       it('should emit a data event', function () {
@@ -197,9 +186,6 @@ describe('flowHttp', function () {
             end = true;
             done();
           });
-        setTimeout(function () {
-          if (!end) done(new Error('the end event was never fired'));
-        }, 100);
       });
 
       it('should emit a data event', function () {
