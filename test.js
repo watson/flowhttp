@@ -7,6 +7,8 @@ var url = require('url');
 var fh = require('./index');
 var Request = require('./lib/request');
 
+fh.agent = false; // opt out of connection pooling - makes the tests fail
+
 describe('Request prototype', function () {
   it('should be a duplex stream', function () {
     assert(Request.prototype instanceof stream.Duplex, 'The Request object should be an instance of stream.Duplex');

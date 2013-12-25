@@ -13,6 +13,8 @@ var request = function () {
     options = url.parse(options);
   if (argc === 2)
     options.method = arguments[0];
+  if (!('agent' in options) && 'agent' in exports)
+    options.agent = exports.agent;
   return new Request(options);
 };
 
@@ -32,4 +34,4 @@ flowHttp.del = function (options) {
   return req;
 };
 
-module.exports = flowHttp;
+module.exports = exports = flowHttp;
