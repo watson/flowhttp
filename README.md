@@ -84,28 +84,33 @@ convenience methods. `Request` inherits from
 var duplexRequestStream = flowHttp('http://example.com');
 ```
 
-Besides the normal methods avaliable on a duplex stream, the following
-functions from
+Besides the normal methods and properties avaliable on a duplex stream,
+the following API have been made available:
+
+### request.req
+
+The native
 [http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
-have been made available:
+object.
+
+### request.res
+
+The native
+[http.IncomingMessage](http://nodejs.org/api/http.html#http_http_incomingmessage)
+object. Note that this property will not be available until the
+`response` event have been emittet.
 
 ### request.setHeader(name, value)
 
-Set a header on the
-[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
-object.
+An alias for `request.req.setHeader()`.
 
 ### request.getHeader(name)
 
-Get a header from the
-[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
-object.
+An alias for `request.req.getHeader()`.
 
 ### request.removeHeader(name)
 
-Remove a header from the
-[http.ClientRequest](http://nodejs.org/api/http.html#http_class_http_clientrequest)
-object.
+An alias for `request.req.removeHeader()`.
 
 ### Event 'response'
 
