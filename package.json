@@ -1,6 +1,6 @@
 {
   "name": "flowhttp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Treat node.js http(s) as a simple duplex stream",
   "main": "index.js",
   "dependencies": {},
