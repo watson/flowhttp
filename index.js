@@ -3,14 +3,16 @@
 var url = require('url');
 var Request = require('./lib/request');
 
-var normalizeOptions = function (options) {
+// Call with either one or two arguments:
+//   flowHttp(method, options)
+//   flowHttp(options)
+var flowHttp = function () {
+  var argc = arguments.length,
+      options = arguments[argc-1];
   if (typeof options === 'string')
     options = url.parse(options);
-  return options;
-};
-
-var flowHttp = function (options) {
-  options = normalizeOptions(options);
+  if (argc === 2)
+    options.method = arguments[0];
   var method = options.method || 'GET';
   var duplex = ['GET', 'DELETE', 'HEAD'].indexOf(method) === -1;
   var req = new Request(options);
@@ -19,23 +21,8 @@ var flowHttp = function (options) {
 };
 
 flowHttp.get = flowHttp;
-
-flowHttp.post = function (options) {
-  options = normalizeOptions(options);
-  options.method = 'POST';
-  return flowHttp(options);
-};
-
-flowHttp.put = function (options) {
-  options = normalizeOptions(options);
-  options.method = 'PUT';
-  return flowHttp(options);
-};
-
-flowHttp.del = function (options) {
-  options = normalizeOptions(options);
-  options.method = 'DELETE';
-  return flowHttp(options);
-};
+flowHttp.post = flowHttp.bind(null, 'POST');
+flowHttp.put = flowHttp.bind(null, 'PUT');
+flowHttp.del = flowHttp.bind(null, 'DELETE');
 
 module.exports = flowHttp;
