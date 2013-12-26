@@ -13,8 +13,8 @@ var request = function () {
     options = url.parse(options);
   if (argc === 2)
     options.method = arguments[0];
-  if (!('agent' in options) && 'agent' in exports)
-    options.agent = exports.agent;
+  if (!('agent' in options))
+    options.agent = flowHttp.agent;
   return new Request(options);
 };
 
@@ -34,7 +34,10 @@ flowHttp.del = function (options) {
   return req;
 };
 
-// Some might want easy access to the Request object - we don't use it
+// Some might want easy access to the Request object - we don't really use it
 flowHttp.Request = Request;
 
-module.exports = exports = flowHttp;
+// The default agent used if not specified in options
+flowHttp.agent = http.globalAgent;
+
+module.exports = flowHttp;
