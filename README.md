@@ -74,6 +74,19 @@ automatically.
 Since most requests are GET requests, the `flowHttp.get()` method have
 been aliased for your convenience.
 
+### flowHttp.agent
+
+Set this property to
+[http.globalAgent](http://nodejs.org/api/http.html#http_http_globalagent)
+can easily be overwritten:
+
+```javascript
+flowHttp.agent = false; // don't use an agent
+```
+
+For more info about custom agents, see
+[http.Agent](http://nodejs.org/api/http.html#http_class_http_agent).
+
 ## Class: flowHttp.Request
 
 The `Request` object is returned by `flowHttp.request()` and its
@@ -135,19 +148,6 @@ Emitted when the entire reponse have been received.
 `function (err) {}`
 
 If an error occurs during the request/reponse cycle, you will get notified here.
-
-## Defaults
-
-The default
-[http.globalAgent](http://nodejs.org/api/http.html#http_http_globalagent)
-can easily be overwritten:
-
-```javascript
-flowHttp.agent = false; // don't use an agent
-```
-
-For more info about custom agents, see
-[http.Agent](http://nodejs.org/api/http.html#http_class_http_agent).
 
 ## Examples
 
