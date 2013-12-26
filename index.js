@@ -16,6 +16,7 @@ var request = function () {
     options.method = arguments[0];
   if (!('agent' in options))
     options.agent = flowHttp.agent;
+  options.middleware = flowHttp.middleware;
   return new Request(options);
 };
 
