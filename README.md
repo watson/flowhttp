@@ -74,6 +74,55 @@ automatically.
 Since most requests are GET requests, the `flowHttp.get()` method have
 been aliased for your convenience.
 
+### flowHttp.middleware
+
+If you need to transform the stream based on the response headers you
+can make use of the `flowHttp.middleware` property. Normally you would
+set it to a `Duplex`, `Transform` or `PassThrough` object - or an array
+of objects.
+
+```javascript
+// Set it to a single object
+flowHttp.middleware = DuplexStream;
+// Or an array of objects
+flowHttp.middleware = [ Foo, Bar ];
+```
+
+Here is a complete example of how a `PassThrough` stream is used to
+optionally decode gzip data or pass it through if the `Content-Encoding`
+header doesn't specify gzip.
+
+```javascript
+var util = require('util');
+var zlib = require('zlib');
+var PassThrough = require('stream').PassThrough;
+
+// Decoder that will check the Conent-Encoding headers and optionally
+// decode the body of the HTTP request
+var Decoder = function () {
+  var decoder = this;
+  PassThrough.call(this);
+  this.on('pipe', function (src) {
+    // The original http.IncomingMessage object will always be available
+    // on the `.res` attribute of the source object
+    if (src.res && src.res.headers['content-encoding'] === 'gzip') {
+      src.unpipe(decoder);
+      src.pipe(zlib.createGunzip()).pipe(decoder);
+    }
+  });
+};
+util.inherits(Decoder, PassThrough);
+
+// Attach the Decoder as middleware to the flowHttp module. Can either
+// be an array or a single object. If present the response from the
+// server will be piped through these before being returned
+flowHttp.middleware = Decoder;
+
+// Request example.com, filter it through the Decoder middleware and
+// pipe the response to STDOUT
+flowHttp('http://example.com').pipe(process.stdout);
+```
+
 ### flowHttp.agent
 
 Set this property to
