@@ -1,6 +1,7 @@
 'use strict';
 
 var url = require('url');
+var http = require('http');
 var Request = require('./lib/request');
 
 // Call with either one or two arguments:
