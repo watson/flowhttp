@@ -239,7 +239,8 @@ util.inherits(Decoder, PassThrough);
 flowHttp('http://example.com').pipe(new Decoder()).pipe(process.stdout);
 ```
 
-See `examples/decoder.js` for a full working example program.
+See the [flowhttp-decoder](https://github.com/watson/flowhttp-decoder)
+module for a fully working example.
 
 ### Chaining
 
@@ -249,8 +250,16 @@ to forward the `response` event down the line. A special
 `Readable` class. This method will therefore be available for all
 streams that you pipe from.
 
-See `examples/decoder.js` for details of how to implement this in your
-own streams.
+See the [flowhttp-decoder](https://github.com/watson/flowhttp-decoder)
+module as an example of how to implement this in your own streams.
+
+## Modules supporting flowHttp
+
+- [flowhttp-status](https://github.com/watson/flowhttp-status) - Supply
+  a whitelist of HTTP status codes. If the HTTP response doesn't conform
+  to this whitelist, an `error` event will be emittet on the stream
+- [flowhttp-decoder](https://github.com/watson/flowhttp-decoder) -
+  Automatically decode gzipped and deflated responses
 
 ## License
 
