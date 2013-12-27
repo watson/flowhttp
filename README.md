@@ -193,6 +193,66 @@ req.write('data to be sent to the server');
 red.end(); // call end to send the request
 ```
 
+## Piping
+
+A very common usage of flowHttp is to pipe the response to a writable
+stream:
+
+```javascript
+flowHttp('http://example.com').pipe(getWriteableStreamSomehow());
+```
+
+But what if the writeable stream needs access to the
+`http.IncomingMessage` object? E.g. to know the HTTP status code or read
+some of the headers.
+
+To allow for this, a special `response` event is emittet to all
+writeable streams attached using the `request.pipe()` method. Consider
+the following example:
+
+```javascript
+var util = require('util');
+var zlib = require('zlib');
+var PassThrough = require('stream').PassThrough;
+
+// Decoder that will check the Conent-Encoding headers and optionally
+// decode the body of the HTTP request
+var Decoder = function () {
+  var decoder = this;
+  PassThrough.call(this);
+
+  // Listen for the special `response` event
+  this.once('response', function (res) {
+    if (res.headers['content-encoding'] === 'gzip') {
+      decoder._src.unpipe(decoder);
+      decoder._src.pipe(zlib.createGunzip()).pipe(decoder);
+    }
+  });
+
+  // Record the source of the pipe to be used above
+  this.on('pipe', function (src) {
+    if (!decoder._src)
+      decoder._src = src;
+  });
+};
+util.inherits(Decoder, PassThrough);
+
+flowHttp('http://example.com').pipe(new Decoder()).pipe(process.stdout);
+```
+
+See `examples/decoder.js` for a full working example program.
+
+### Chaining
+
+If you chain multiple streams using the `.pipe()` method, you might want
+to forward the `response` event down the line. A special
+`readable._forwardFlowHttpResponse()` method have been added to the
+`Readable` class. This method will therefore be available for all
+streams that you pipe from.
+
+See `examples/decoder.js` for details of how to implement this in your
+own streams.
+
 ## License
 
 MIT
