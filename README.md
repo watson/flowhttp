@@ -230,9 +230,8 @@ var Decoder = function () {
   });
 
   // Record the source of the pipe to be used above
-  this.on('pipe', function (src) {
-    if (!decoder._src)
-      decoder._src = src;
+  this.once('pipe', function (src) {
+    decoder._src = src;
   });
 };
 util.inherits(Decoder, PassThrough);
