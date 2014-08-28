@@ -76,9 +76,9 @@ been aliased for your convenience.
 
 ### flowHttp.agent
 
-Set this property to
-[http.globalAgent](http://nodejs.org/api/http.html#http_http_globalagent)
-can easily be overwritten:
+By default flowHttp uses
+[http.globalAgent](http://nodejs.org/api/http.html#http_http_globalagent).
+Use this property to override, e.g:
 
 ```javascript
 flowHttp.agent = false; // don't use an agent
