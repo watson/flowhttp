@@ -260,6 +260,8 @@ module as an example of how to implement this in your own streams.
   to this whitelist, an `error` event will be emittet on the stream
 - [flowhttp-decoder](https://github.com/watson/flowhttp-decoder) -
   Automatically decode gzipped and deflated responses
+- [flowhttp-json](https://github.com/watson/flowhttp-json) - Automatically
+  parse json responses
 
 ## License
 
