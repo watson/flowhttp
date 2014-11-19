@@ -74,6 +74,21 @@ automatically.
 Since most requests are GET requests, the `flowHttp.get()` method have
 been aliased for your convenience.
 
+### flowHttp.statusCodes
+
+By default flowHttp just processes all responses no matter the returned
+HTTP status code. If you want to only allow a certain set of status
+codes, use the `flowHttp.statusCodes` property and set it to either a
+single status code or an array or allowed status codes.
+
+If the request doesn't have an allowed status code, an `error` will be
+emitted.
+
+```javascript
+// Only accept 200 Ok
+flowHttp.statusCodes = 200;
+```
+
 ### flowHttp.agent
 
 By default flowHttp uses
